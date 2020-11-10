@@ -1,11 +1,14 @@
 from PyQt5.QtWidgets import QMainWindow, QLabel, QPlainTextEdit
 from PyQt5.Qt import QPixmap
+from PyQt5.QtGui import QIcon
 import config
 
 
 class MyViewReceptWindow(QMainWindow):
     def __init__(self, data):
         super().__init__()
+
+        self.setWindowIcon(QIcon(config.ICON_PATH))
 
         self.data = data[0]
 

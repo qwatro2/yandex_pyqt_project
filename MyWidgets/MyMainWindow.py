@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtGui import QIcon
 from MyWidgets.MyMenuWindow import MyMenuWindow
 from MyWidgets.MyViewWindow import MyViewWindow
 from MyWidgets.MyAddReceptWindow import MyAddReceptWindow
@@ -10,6 +11,8 @@ import sqlite3
 class MyMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.setWindowIcon(QIcon(config.ICON_PATH))
 
         self.setWindowTitle(config.MAIN_WINDOW_TITLE)
 

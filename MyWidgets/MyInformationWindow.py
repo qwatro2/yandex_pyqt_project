@@ -1,11 +1,14 @@
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QPlainTextEdit
 from PyQt5.Qt import QPixmap
+from PyQt5.QtGui import QIcon
 import config
 
 
 class MyInformationWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.setWindowIcon(QIcon(config.ICON_PATH))
 
         self.setWindowTitle('Инструкция')
 
