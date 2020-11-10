@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from MyWidgets.MyMenuWindow import MyMenuWindow
 from MyWidgets.MyViewWindow import MyViewWindow
 from MyWidgets.MyAddReceptWindow import MyAddReceptWindow
+from MyWidgets.MyInformationWindow import MyInformationWindow
 import config
 import sqlite3
 

@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPlainTextEdit, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPlainTextEdit, QPushButton, QMessageBox, QLabel
+from PyQt5.Qt import QPixmap
 import config
 
 
@@ -8,6 +9,10 @@ class MyAddReceptWindow(QWidget):
 
         self.setGeometry(0, 0, *config.SCREEN_SIZE)
         self.setFixedSize(*config.SCREEN_SIZE)
+
+        background_label = QLabel(self)
+        background_label.setPixmap(QPixmap(config.ADD_RECEPT_WINDOW_BACKGROUND_IMAGE))
+        background_label.resize(*config.SCREEN_SIZE)
 
         self.initUI()
 
@@ -22,6 +27,7 @@ class MyAddReceptWindow(QWidget):
 
         self.recept_compexity = QComboBox(self)
         self.recept_compexity.addItems(['1', '2', '3', '4', '5'])
+        self.recept_compexity.setCurrentIndex(0)
         self.recept_compexity.resize(int(self.width() * 0.125), int(self.height() * 0.05))
         self.recept_compexity.move(int(self.width() * 0.85), int(self.height() * 0.025))
         self.widgets.append(self.recept_compexity)
@@ -36,12 +42,13 @@ class MyAddReceptWindow(QWidget):
         self.recept_ingridients.resize(int(self.width() * 0.95), int(self.height() * 0.2625))
         self.recept_ingridients.move(int(self.width() * 0.025), int(self.height() * 0.275))
         self.recept_ingridients.setReadOnly(True)
+        self.recept_ingridients.setPlaceholderText('Здесь будут отображаться используемые ингредиенты')
         self.widgets.append(self.recept_ingridients)
 
         self.enter_ingridient = QLineEdit(self)
         self.enter_ingridient.resize(int(self.width() * 0.5), int(self.height() * 0.05))
         self.enter_ingridient.move(int(self.width() * 0.025), int(self.height() * 0.5625))
-        self.enter_ingridient.setPlaceholderText('Введите следующий ингридиет без массы или объема')
+        self.enter_ingridient.setPlaceholderText('Введите следующий ингредиент без массы')
         self.widgets.append(self.enter_ingridient)
 
         add_entered_ingridient_button = QPushButton('Добавить', self)
@@ -58,6 +65,7 @@ class MyAddReceptWindow(QWidget):
         self.recept_steps.resize(int(self.width() * 0.95), int(self.height() * 0.2))
         self.recept_steps.move(int(self.width() * 0.025), int(self.height() * 0.6375))
         self.recept_steps.setReadOnly(True)
+        self.recept_steps.setPlaceholderText('Здесь будут отображаться этапы приготовления')
         self.widgets.append(self.recept_steps)
 
         self.enter_step = QLineEdit(self)
@@ -100,7 +108,6 @@ class MyAddReceptWindow(QWidget):
                 entered_ingridients = []
 
             entered_ingridients.append(ingridient)
-            print(entered_ingridients)
             self.recept_ingridients.setPlainText(
                 '\n'.join(entered_ingridients)
             )
@@ -127,7 +134,7 @@ class MyAddReceptWindow(QWidget):
                 last_number = int(old_text[-1].split('.')[0])
             old_text.append(str(last_number + 1) + '. ' + step)
             self.recept_steps.setPlainText(
-               '\n'.join(old_text)
+                '\n'.join(old_text)
             )
 
         self.enter_step.setText('')
@@ -142,10 +149,10 @@ class MyAddReceptWindow(QWidget):
 
     def save_recept(self):
         title = self.recept_title.text().lower()
-        complexity = int(self.recept_compexity.currentIndex())
+        complexity = int(self.recept_compexity.currentText())
         description = self.recept_discriptoin.toPlainText().lower()
-        ingrigients = ';'.join(self.recept_ingridients.toPlainText().split('\n')[:-1]).lower()
-        recept = '&'.join(self.recept_steps.toPlainText().split('\n')[:-1]).lower()
+        ingrigients = ';'.join(self.recept_ingridients.toPlainText().split('\n')).lower()
+        recept = '&'.join(self.recept_steps.toPlainText().split('\n')).lower()
 
         if sum(map(lambda x: 1 if x else 0, [title,
                                              complexity,
@@ -159,6 +166,7 @@ class MyAddReceptWindow(QWidget):
         cur.execute(f'INSERT INTO recepts(title, ingredients, description, recept, complexity) VALUES'
                     f'("{title}", "{ingrigients}", "{description}", "{recept}", {complexity})')
         self.parent().database_connection.commit()
+        QMessageBox.information(self, 'Успех ', 'Рецепт успешно сохранен', QMessageBox.Ok)
         self.clear_form()
         self.hide()
         self.parent().menu_window.show()
@@ -172,3 +180,4 @@ class MyAddReceptWindow(QWidget):
         for widget in self.widgets:
             widget.clear()
         self.recept_compexity.addItems(['1', '2', '3', '4', '5'])
+        self.recept_compexity.setCurrentIndex(0)

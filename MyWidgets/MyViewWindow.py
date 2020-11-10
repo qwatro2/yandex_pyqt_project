@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QTableWidget, QTableWidgetItem, QPushButton, QLineEdit
+from PyQt5.QtWidgets import QWidget, QTableWidget, QTableWidgetItem, QPushButton, QLineEdit, QLabel
 from PyQt5.QtCore import Qt
+from PyQt5.Qt import QPixmap
 from MyWidgets.MyViewReceptWindow import MyViewReceptWindow
 import config
 
@@ -12,6 +13,10 @@ class MyViewWindow(QWidget):
 
         self.setGeometry(0, 0, *config.SCREEN_SIZE)
         self.setFixedSize(*config.SCREEN_SIZE)
+
+        background_label = QLabel(self)
+        background_label.setPixmap(QPixmap(config.VIEW_WINDOW_BACKGROUND_IMAGE))
+        background_label.resize(*config.SCREEN_SIZE)
 
         self.initUI()
 
@@ -102,7 +107,7 @@ class MyViewWindow(QWidget):
             if self.key == 'title':
                 header_labels = ['Название блюда', 'Краткое описание', 'Сложность']
             elif self.key == 'complexity':
-                header_labels = ['Название люда', 'Краткое описание', 'Сложность']
+                header_labels = ['Название блюда', 'Краткое описание', 'Сложность']
             else:
                 header_labels = ['Название блюда', 'Краткое описание', 'Ингредиенты', 'Сложность']
 

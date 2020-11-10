@@ -1,4 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QWidget, QPushButton, QLabel
+from PyQt5.Qt import QPixmap
+from MyWidgets.MyInformationWindow import MyInformationWindow
 import sys
 import config
 
@@ -13,6 +15,10 @@ class MyMenuWindow(QWidget):
         self.initUI()
 
     def initUI(self):
+        background_label = QLabel(self)
+        background_label.setPixmap(QPixmap(config.MAIN_WINDOW_BACKGROUND_IMAGE))
+        background_label.resize(*config.SCREEN_SIZE)
+
         browse_by_title_button = QPushButton('Поиск рецептов по названию', self)
         browse_by_title_button.resize(int(self.width() * 0.6), int(self.height() * 0.12))
         browse_by_title_button.move(int(self.width() * 0.2), int(self.height() * 0.04))
@@ -33,7 +39,7 @@ class MyMenuWindow(QWidget):
         add_button.move(int(self.width() * 0.2), int(self.height() * 0.52))
         add_button.clicked.connect(self.open_add_window)
 
-        info_button = QPushButton('Информация', self)
+        info_button = QPushButton('Инструкция', self)
         info_button.resize(int(self.width() * 0.6), int(self.height() * 0.12))
         info_button.move(int(self.width() * 0.2), int(self.height() * 0.68))
         info_button.clicked.connect(self.show_information)
@@ -64,6 +70,4 @@ class MyMenuWindow(QWidget):
         self.parent().add_recept_window.show()
 
     def show_information(self):
-        QMessageBox.question(self, 'Удалить', 'В форме добавления рецептов кнопка '
-                                              '"Удалить" удаляет только последнюю '
-                                              'строку, а не очищает соответствующее поле полностью', QMessageBox.Ok)
+        self.information_window = MyInformationWindow()

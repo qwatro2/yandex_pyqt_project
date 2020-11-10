@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QLabel, QPlainTextEdit
-
+from PyQt5.Qt import QPixmap
 import config
 
 
@@ -10,6 +10,10 @@ class MyViewReceptWindow(QMainWindow):
         self.data = data[0]
 
         self.setWindowTitle('Рецепт: ' + self.data[1] + ' Сложность: ' + str(self.data[5]))
+
+        background_label = QLabel(self)
+        background_label.setPixmap(QPixmap(config.VIEW_WINDOW_BACKGROUND_IMAGE))
+        background_label.resize(*config.VIEW_RECEPT_WINDOW_SIZE)
 
         self.setGeometry(800, 50, *config.VIEW_RECEPT_WINDOW_SIZE)
         self.setFixedSize(*config.VIEW_RECEPT_WINDOW_SIZE)
