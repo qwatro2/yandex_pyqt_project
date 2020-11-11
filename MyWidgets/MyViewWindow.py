@@ -2,27 +2,37 @@ from PyQt5.QtWidgets import QWidget, QTableWidget, QTableWidgetItem, QPushButton
 from PyQt5.QtCore import Qt
 from PyQt5.Qt import QPixmap
 from MyWidgets.MyViewReceptWindow import MyViewReceptWindow
-import config
+import constants
 
 
 class MyViewWindow(QWidget):
+    """
+    Класс окна показа базы данных.
+    Используется для отображения данных пользователю и поиска.
+    """
+
     def __init__(self, parent, key):
         super().__init__(parent)
 
         self.key = key
 
-        self.setGeometry(0, 0, *config.SCREEN_SIZE)
-        self.setFixedSize(*config.SCREEN_SIZE)
+        self.setGeometry(0, 0, *constants.SCREEN_SIZE)
+        self.setFixedSize(*constants.SCREEN_SIZE)
 
         background_label = QLabel(self)
-        background_label.setPixmap(QPixmap(config.VIEW_WINDOW_BACKGROUND_IMAGE))
-        background_label.resize(*config.SCREEN_SIZE)
+        background_label.setPixmap(QPixmap(constants.VIEW_WINDOW_BACKGROUND_IMAGE))
+        background_label.resize(*constants.SCREEN_SIZE)
 
         self.initUI()
 
         self.load_table()
 
     def initUI(self):
+        """
+        Метод инициализации UI.
+        Создает поле таблицы, строку поиска, используя ключ, кнопки.
+        """
+
         self.filter_lineedit = QLineEdit(self)
         self.filter_lineedit.resize(int(self.width() * 0.7), int(self.height() * 0.05))
         self.filter_lineedit.move(int(self.width() * 0.05), int(self.height() * 0.05))
@@ -56,6 +66,11 @@ class MyViewWindow(QWidget):
         return_to_menu_button.clicked.connect(self.return_to_menu)
 
     def load_table(self):
+        """
+        Метод отображения базы данных в таблицу.
+        С помощью данных из строки поиска и ключа, отображает нужные данные в таблицу.
+        """
+
         cur = self.parent().database_connection.cursor()
 
         filter = self.filter_lineedit.text().lower()
@@ -118,10 +133,20 @@ class MyViewWindow(QWidget):
         self.table.resizeColumnsToContents()
 
     def return_to_menu(self):
+        """
+        Метод возврата в меню.
+        """
+
         self.hide()
         self.parent().menu_window.show()
 
     def open_current_recept(self):
+        """
+        Метод показа выбранного рецепта.
+        По выделенному блюду делает запрос к базе данных и создает окно,
+        в котором отображается информация.
+        """
+
         current_row = self.table.currentItem().row()
         choosen_title = self.table.item(current_row, 0).text()
         cur = self.parent().database_connection.cursor()

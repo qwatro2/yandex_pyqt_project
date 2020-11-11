@@ -1,23 +1,34 @@
 from PyQt5.QtWidgets import QWidget, QPushButton, QLabel
 from PyQt5.Qt import QPixmap
+from MyWidgets.MyExitMessageBox import MyExitMessageBox
 from MyWidgets.MyInformationWindow import MyInformationWindow
 import sys
-import config
+import constants
 
 
 class MyMenuWindow(QWidget):
+    """
+    Класс окна меню приложения.
+    Имеет кнопки навигации по окнам приложения и соответсвующие методы.
+    """
+
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.setGeometry(0, 0, *config.SCREEN_SIZE)
-        self.setFixedSize(*config.SCREEN_SIZE)
+        self.setGeometry(0, 0, *constants.SCREEN_SIZE)
+        self.setFixedSize(*constants.SCREEN_SIZE)
 
         self.initUI()
 
     def initUI(self):
+        """
+        Метод инициализации UI.
+        Создает на виджете фоновую картинку и кнопки, их соединение с методами.
+        """
+
         background_label = QLabel(self)
-        background_label.setPixmap(QPixmap(config.MAIN_WINDOW_BACKGROUND_IMAGE))
-        background_label.resize(*config.SCREEN_SIZE)
+        background_label.setPixmap(QPixmap(constants.MAIN_WINDOW_BACKGROUND_IMAGE))
+        background_label.resize(*constants.SCREEN_SIZE)
 
         browse_by_title_button = QPushButton('Поиск рецептов по названию', self)
         browse_by_title_button.resize(int(self.width() * 0.6), int(self.height() * 0.12))
@@ -47,10 +58,15 @@ class MyMenuWindow(QWidget):
         exit_button = QPushButton('Выход', self)
         exit_button.resize(int(self.width() * 0.6), int(self.height() * 0.12))
         exit_button.move(int(self.width() * 0.2), int(self.height() * 0.84))
-        exit_button.clicked.connect(sys.exit)
+        exit_button.clicked.connect(self.my_exit)
 
     def open_view_window(self):
-        key = config.BUTTON_TEXT_TO_KEYS[self.sender().text()]
+        """
+        Метод открытия окна просмотра базы данных.
+        С помощью получаемого ключа вызывает показ нужного виджета.
+        """
+
+        key = constants.BUTTON_TEXT_TO_KEYS[self.sender().text()]
         self.parent().menu_window.hide()
         if key == 'title':
             self.parent().browse_by_title_window.filter_lineedit.clear()
@@ -70,4 +86,20 @@ class MyMenuWindow(QWidget):
         self.parent().add_recept_window.show()
 
     def show_information(self):
+        """
+        Метод открытия окна инструкции.
+        """
+
         self.information_window = MyInformationWindow()
+
+    def my_exit(self):
+        """
+        Метод закрытия приложения.
+        Вызывает окно подтверждения действия.
+        """
+
+        exit_message_box = MyExitMessageBox('menu')
+        user_answer = exit_message_box.exec()
+
+        if user_answer == 0:
+            sys.exit()

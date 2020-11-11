@@ -1,22 +1,35 @@
 from PyQt5.QtWidgets import QWidget, QLineEdit, QComboBox, QPlainTextEdit, QPushButton, QMessageBox, QLabel
 from PyQt5.Qt import QPixmap
-import config
+from MyWidgets.MyExitMessageBox import MyExitMessageBox
+import constants
 
 
 class MyAddReceptWindow(QWidget):
+    """
+    Класс окна добавления пользовательских рецептов.
+    Принимает от пользователя все нужные данные,
+    форматирует их для корректной дальнейшей обработки
+    и загружает в базу данных.
+    """
+
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.setGeometry(0, 0, *config.SCREEN_SIZE)
-        self.setFixedSize(*config.SCREEN_SIZE)
+        self.setGeometry(0, 0, *constants.SCREEN_SIZE)
+        self.setFixedSize(*constants.SCREEN_SIZE)
 
         background_label = QLabel(self)
-        background_label.setPixmap(QPixmap(config.ADD_RECEPT_WINDOW_BACKGROUND_IMAGE))
-        background_label.resize(*config.SCREEN_SIZE)
+        background_label.setPixmap(QPixmap(constants.ADD_RECEPT_WINDOW_BACKGROUND_IMAGE))
+        background_label.resize(*constants.SCREEN_SIZE)
 
         self.initUI()
 
     def initUI(self):
+        """
+        Метод инициализации UI.
+        Создает на виджете кнопки, выпадающий список, поля ввода и поля для отображения текста.
+        """
+
         self.widgets = []
 
         self.recept_title = QLineEdit(self)
@@ -100,6 +113,11 @@ class MyAddReceptWindow(QWidget):
         return_to_menu_button.clicked.connect(self.return_to_menu)
 
     def add_entered_ingridient(self):
+        """
+        Метод добавления ингридиента.
+        Получает из QLineEdit строку и добавляет ее в соответствующее поле.
+        """
+
         ingridient = self.enter_ingridient.text()
         if ingridient and ingridient != '\n':
             entered_ingridients = self.recept_ingridients.toPlainText().split('\n')
@@ -115,6 +133,18 @@ class MyAddReceptWindow(QWidget):
         self.enter_ingridient.setText('')
 
     def delete_last_ingridient(self):
+        """
+        Метод удаления последнего ингредиента.
+        Создает диалоговое окно подтверждения действия.
+        При положительном ответе, удаляет последний добавленный ингредиент.
+        """
+
+        exit_message_box = MyExitMessageBox('add_recept_delete_last')
+        user_answer = exit_message_box.exec()
+
+        if user_answer == 1:
+            return
+
         old_text = self.recept_ingridients.toPlainText()
 
         if old_text:
@@ -123,6 +153,11 @@ class MyAddReceptWindow(QWidget):
             )
 
     def add_entered_step(self):
+        """
+        Метод добавления этапа.
+        Получает из QLineEdit строку и добавляет ее в соответствующее поле.
+        """
+
         step = self.enter_step.text()
 
         if step:
@@ -140,6 +175,18 @@ class MyAddReceptWindow(QWidget):
         self.enter_step.setText('')
 
     def delete_last_step(self):
+        """
+        Метод удаления последнего этапа.
+        Создает диалоговое окно подтверждения действия.
+        При положительном ответе, удаляет последний добавленный этап.
+        """
+
+        exit_message_box = MyExitMessageBox('add_recept_delete_last')
+        user_answer = exit_message_box.exec()
+
+        if user_answer == 1:
+            return
+
         old_text = self.recept_steps.toPlainText()
 
         if old_text:
@@ -148,6 +195,14 @@ class MyAddReceptWindow(QWidget):
             )
 
     def save_recept(self):
+        """
+        Метод сохранения рецепта в базу данных.
+        Принимает из соответсвующих полей информацию и обрабатывает ее.
+        Вызывает сообщение об ошибке, если не все поля заполнены.
+        Делает к базе данных запрос о добавлении рецепта.
+        Выводит сообщение об успехе.
+        """
+
         title = self.recept_title.text().lower()
         complexity = int(self.recept_compexity.currentText())
         description = self.recept_discriptoin.toPlainText().lower()
@@ -167,16 +222,47 @@ class MyAddReceptWindow(QWidget):
                     f'("{title}", "{ingrigients}", "{description}", "{recept}", {complexity})')
         self.parent().database_connection.commit()
         QMessageBox.information(self, 'Успех ', 'Рецепт успешно сохранен', QMessageBox.Ok)
-        self.clear_form()
+
+        self.clear_widgets()
+
         self.hide()
         self.parent().menu_window.show()
 
     def return_to_menu(self):
-        self.clear_form()
+        """
+        Метод возвращения в меню.
+        """
+
+        exit_message_box = MyExitMessageBox('add_recept_back_to_menu')
+        user_answer = exit_message_box.exec()
+
+        if user_answer == 1:
+            return
+
+        self.clear_widgets()
+
         self.hide()
         self.parent().menu_window.show()
 
     def clear_form(self):
+        """
+        Метод вызывает очистку всех полей формы
+        при подтвреждении этого в диалоговом окне.
+        """
+
+        exit_message_box = MyExitMessageBox('add_recept_clean_form')
+        user_answer = exit_message_box.exec()
+
+        if user_answer == 1:
+            return
+
+        self.clear_widgets()
+
+    def clear_widgets(self):
+        """
+        Метод непосредственно очищающих содержимое всех виджетов.
+        """
+
         for widget in self.widgets:
             widget.clear()
         self.recept_compexity.addItems(['1', '2', '3', '4', '5'])

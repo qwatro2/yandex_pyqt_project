@@ -4,6 +4,10 @@ import sys
 
 
 def main():
+    """
+    Главная функция программы.
+    Создает окно приложения и главный виджет.
+    """
     app = QApplication(sys.argv)
     main_window = MyMainWindow()
     main_window.show()
